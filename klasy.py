@@ -123,7 +123,7 @@ class Turn:
         self.players()[0].set_blind(True)
 
     def round(self, number, players):
-        while len(players) > 1 and self.how_many_called() != len(players):
+        while len(players) > 1 and self.how_many_called() < len(players):
             if self.winner() is False:
                 if self.gamer() in players:
                     print('YOUR TURN')
@@ -137,7 +137,7 @@ class Turn:
                     print('Your hand is:')
                     print(self.gamer().hand())
                     self.player_moves(self.gamer())
-                for player in self.players():
+                for player in players:
                     if isinstance(player, CPU):
                         print(f'{player.name()} TURN')
                         if number == 1:
@@ -146,7 +146,7 @@ class Turn:
                 for player in players:
                     if player.fold() is False:
                         new_players.append(player)
-                round(self, number, new_players)
+                self.round(number, new_players)
         self.set_current_call(0)
         self._how_many_called = 0
         for player in players:

@@ -91,6 +91,7 @@ class CPU:
     def check_hand_round1(self, turn):
         if self.call() > 0:
             turn.player_check(self)
+            print(f"{self.name()} checks.")
             return
         for card in self.hand():
             self.add_card(card)

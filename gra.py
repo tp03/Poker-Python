@@ -58,6 +58,7 @@ blind = x[1]
 continue_playing = True
 while continue_playing is True:
     for player in players:
+        player._hand = []
         if player.pot() == 0:
             players.remove(player)
     if player1 not in players:
