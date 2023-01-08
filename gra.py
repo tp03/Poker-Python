@@ -67,11 +67,11 @@ while continue_playing is True:
     turn = Turn(player1, players, blind)
     turn.give_cards()
     turn.set_blind()
-    rest = turn.first_round()
+    turn.first_round()
     if turn.winner() is False:
-        rest2 = turn.second_round(rest)
+        turn.second_round()
         if turn.winner() is False:
-            remaining = turn.third_round(rest2)
+            remaining = turn.third_round()
             turn.check_winner(remaining)
     next = input("Do you want to continue? If so, press 1. ")
     if next != '1':

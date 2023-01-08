@@ -171,20 +171,24 @@ class CPU:
             if key != 'nothing' and key != 'Pair':
                 propabilities.append(hand_occurance[key])
         if max(propabilities) - self.get_pot_ods(turn) > 0.2:
-            turn.player_raise_pot(self, int(0.2*self.pot()))
-            print(f"{self.name()} raises {int(0.2*self.pot())}.")
+            _raise = int(0.2*self.pot())
+            turn.player_raise_pot(self, _raise)
+            print(f"{self.name()} raises {_raise}.")
         elif max(propabilities) - self.get_pot_ods(turn) > 0.15:
-            turn.player_raise_pot(self, int(0.15*self.pot()))
-            print(f"{self.name()} raises {int(0.15*self.pot())}.")
+            _raise = int(0.15*self.pot())
+            turn.player_raise_pot(self, _raise)
+            print(f"{self.name()} raises {_raise}.")
         elif max(propabilities) - self.get_pot_ods(turn) > 0.1:
-            turn.player_raise_pot(self, int(0.1*self.pot()))
-            print(f"{self.name()} raises {int(0.1*self.pot())}.")
+            _raise = int(0.1*self.pot())
+            turn.player_raise_pot(self, _raise)
+            print(f"{self.name()} raises {_raise}.")
         elif max(propabilities) - self.get_pot_ods(turn) > 0.05:
-            turn.player_raise_pot(self, int(0.05*self.pot()))
-            print(f"{self.name()} raises {int(0.05*self.pot())}.")
+            _raise = int(0.05*self.pot())
+            turn.player_raise_pot(self, _raise)
+            print(f"{self.name()} raises {_raise}.")
         elif max(propabilities) > self.get_pot_ods(turn):
-            turn.player_raise_pot(self, int(0.01*self.pot()))
-            print(f"{self.name()} raises {int(0.01*self.pot())}.")
+            turn.player_raise_pot(self, _raise)
+            print(f"{self.name()} raises {_raise}.")
         elif self.get_pot_ods(turn) - max(propabilities) < 0.1:
             turn.player_check(self)
             print(f"{self.name()} checks.")
