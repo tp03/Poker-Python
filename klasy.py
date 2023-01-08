@@ -123,7 +123,7 @@ class Turn:
         self.players()[0].set_blind(True)
 
     def round(self, number, players):
-        while len(players) > 1 and self.how_many_called() < len(players):
+        while len(players) > 1:
             if self.winner() is False:
                 if self.gamer() in players:
                     print('YOUR TURN')
@@ -137,23 +137,40 @@ class Turn:
                     print('Your hand is:')
                     print(self.gamer().hand())
                     self.player_moves(self.gamer())
+                    if len(players) == self.how_many_called():
+                        new_players = [player for player in players]
+                        players = []
+                        for player in new_players:
+                            if player.fold() is False:
+                                players.append(player)
+                        self.set_current_call(0)
+                        self._how_many_called = 0
+                        for player in players:
+                            player.reset_call()
+                        return players
                 for player in players:
                     if isinstance(player, CPU):
                         print(f'{player.name()} TURN')
                         if number == 1:
                             player.check_hand_round1(self)
-                new_players = []
-                for player in players:
+                            if len(players) == self.how_many_called():
+                                new_players = [player for player in players]
+                                players = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players.append(player)
+                                self.set_current_call(0)
+                                self._how_many_called = 0
+                                for player in players:
+                                    player.reset_call()
+                                return players
+                new_players = [player for player in players]
+                players = []
+                for player in new_players:
                     if player.fold() is False:
-                        new_players.append(player)
-                self.round(number, new_players)
-        self.set_current_call(0)
-        self._how_many_called = 0
-        for player in players:
-            player.reset_call()
+                        players.append(player)
         if len(players) == 1:
             self.has_won()
-        return players
 
     def has_won(self):
         winner = self.players()[0]
@@ -217,6 +234,12 @@ class Turn:
         for player in self.players():
             if player.fold() is False:
                 new_players.append(player)
+        if len(new_players) == self.how_many_called():
+            self.set_current_call(0)
+            self._how_many_called = 0
+            for player in new_players:
+                player.reset_call()
+            return new_players
         x = self.round(1, new_players)
         return x
 
