@@ -1,4 +1,4 @@
-from klasy import Player, EmptyNameError, Turn
+from klasy import Player, EmptyNameError, Turn, Dealer
 import pytest
 
 
@@ -30,7 +30,8 @@ def test_set_blind():
 
 def test_player_hand():
     player = Player('Tomek')
-    player.add_hand()
+    dealer = Dealer()
+    player.add_hand(dealer)
     assert len(player.hand()) == 2
 
 

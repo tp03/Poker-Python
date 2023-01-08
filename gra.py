@@ -1,4 +1,5 @@
 from klasy import Player, Turn
+from cpu import CPU
 
 print("WELCOME TO P.I.P.R POKER!")
 
@@ -17,18 +18,20 @@ player1 = Player(name)
 players = [player1]
 
 
-# def add_bots():
-#     bots_number = input("How many oponents do you want to play? ")
-#     if int(bots_number) != bots_number:
-#         print("Please enter an integer.")
-#         add_bots()
-#     return bots_number
+def add_bots():
+    bots_number = input("How many oponents do you want to play? ")
+    try:
+        c = int(bots_number)
+    except ValueError:
+        print("Please enter an integer amount.")
+        add_bots
+    return c
 
 
-# bots = add_bots()
-# for n in range(1, bots+1):
-#     cpu = CPU(f"CPU{n}")
-#     players.append(cpu)
+bots = add_bots()
+for n in range(1, bots+1):
+    cpu = CPU(f"CPU{n}")
+    players.append(cpu)
 
 
 def add_pot():
@@ -60,16 +63,14 @@ while continue_playing is True:
     if player1 not in players:
         print("You have lost!")
         continue_playing = False
-    bust = Player('b')
-    players.append(bust)
     turn = Turn(player1, players, blind)
     turn.give_cards()
     turn.set_blind()
-    turn.first_round()
+    rest = turn.first_round()
     if turn.winner() is False:
-        turn.second_round()
+        rest2 = turn.second_round(rest)
         if turn.winner() is False:
-            remaining = turn.third_round()
+            remaining = turn.third_round(rest2)
             turn.check_winner(remaining)
     next = input("Do you want to continue? If so, press 1. ")
     if next != '1':

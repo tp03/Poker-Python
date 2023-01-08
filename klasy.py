@@ -1,5 +1,6 @@
 import random
 from card_comparison import cards_comparison
+from cpu import CPU
 deck = [('2', 'hearts'), ('2', 'diamonds'), ('2', 'spades'), ('2', 'clubs'),
 ('3', 'hearts'), ('3', 'diamonds'), ('3', 'spades'), ('3', 'clubs'),
 ('4', 'hearts'), ('4', 'diamonds'), ('4', 'spades'), ('5', 'clubs'),
@@ -30,6 +31,7 @@ class Turn:
         self._all_in_caller = None
         self._blind = blind
         self._winner = False
+        self._dealer = Dealer()
 
     def gamer(self):
         return self._gamer
@@ -45,6 +47,9 @@ class Turn:
 
     def blind(self):
         return self._blind
+
+    def dealer(self):
+        return self._dealer
 
     def how_many_called(self):
         return self._how_many_called
@@ -68,11 +73,11 @@ class Turn:
         self._current_call = new_call
 
     def give_cards(self):
-        dealer = Dealer()
+        dealer = self.dealer()
         dealer.reset_deck()
         dealer.shuffle()
         for player in self.players():
-            player.add_hand()
+            player.add_hand(dealer)
         self.table().add_cards()
 
     def player_raise_pot(self, player, raise_amount):
@@ -117,10 +122,10 @@ class Turn:
                     return
         self.players()[0].set_blind(True)
 
-    def round(self, number):
-        while len(self.players()) > 1 and self.how_many_called() != len(self.players()):
+    def round(self, number, players):
+        while len(players) > 1 and self.how_many_called() != len(players):
             if self.winner() is False:
-                if self.gamer() in self.players():
+                if self.gamer() in players:
                     print('YOUR TURN')
                     print(f'Current call: {self.current_call()}')
                     if number == 1:
@@ -132,15 +137,23 @@ class Turn:
                     print('Your hand is:')
                     print(self.gamer().hand())
                     self.player_moves(self.gamer())
-                # for player in self.players():
-                #     # if player isinstance(CPU):
-                #         print(f'{player.name()} TURN')
-                #         pass
+                for player in self.players():
+                    if isinstance(player, CPU):
+                        print(f'{player.name()} TURN')
+                        if number == 1:
+                            player.check_hand_round1(self)
+                new_players = []
+                for player in players:
+                    if player.fold() is False:
+                        new_players.append(player)
+                round(self, number, new_players)
         self.set_current_call(0)
-        for player in self.players():
+        self._how_many_called = 0
+        for player in players:
             player.reset_call()
-        if len(self.players()) == 1:
+        if len(players) == 1:
             self.has_won()
+        return players
 
     def has_won(self):
         winner = self.players()[0]
@@ -192,20 +205,32 @@ class Turn:
             self.player_raise_pot(self.gamer(), self.blind())
         else:
             self.player_moves(self.gamer())
-        # for player in self.players():
-            # if player isinstance(CPU):
-        #        print(f'{player.name()} TURN')
-        #         pass
-        self.round(1)
+        for player in self.players():
+            if isinstance(player, CPU):
+                print(f'{player.name()} TURN')
+                if player.is_blind() is True:
+                    print(f'{player.name()} raises blind.')
+                    self.player_raise_pot(player, self.blind())
+                else:
+                    player.check_hand_round1(self)
+        new_players = []
+        for player in self.players():
+            if player.fold() is False:
+                new_players.append(player)
+        x = self.round(1, new_players)
+        return x
 
-    def second_round(self):
+    def second_round(self, players):
+        print("ROUND 2")
         self.table().show_four()
-        self.round(2)
+        x = self.round(2, players)
+        return x
 
-    def third_round(self):
+    def third_round(self, players):
+        print("ROUND 3")
         self.table().show_five()
-        self.round(3)
-        return self.players()
+        rest = self.round(3, players)
+        return rest
 
     def all_in(self):
         caller = self.all_in_caller()
@@ -267,6 +292,7 @@ class Player:
         self._pot = 0
         self._call = 0
         self._is_blind = False
+        self._folded = False
         self._end_hand = []
         self._hand_str = ''
         self._kicker_check = []
@@ -299,6 +325,12 @@ class Player:
     def hand_str(self):
         return self._hand_str
 
+    def fold(self):
+        return self._folded
+
+    def set_fold(self, new_fold):
+        self._folded = new_fold
+
     def add_call(self, new_call):
         self._call += new_call
 
@@ -323,8 +355,7 @@ class Player:
     def add_hand_str(self, hand):
         self._hand_str = hand
 
-    def add_hand(self):
-        dealer = Dealer()
+    def add_hand(self, dealer):
         hand = dealer.get_two()
         for card in hand:
             self._hand.append(card)
