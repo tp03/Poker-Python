@@ -1,5 +1,6 @@
 from card_comparison import check_hand
 from card_hierarchy import sign
+import random
 
 
 class CPU:
@@ -89,16 +90,11 @@ class CPU:
         return int(call) / (int(current_pot) + int(call))
 
     def check_hand_round1(self, turn):
-        if self.call() > 0:
-            turn.player_check(self)
-            print(f"{self.name()} checks.")
-            return
         for card in self.hand():
             self.add_card(card)
         self.add_card(turn.table().cards()[0])
         self.add_card(turn.table().cards()[1])
         self.add_card(turn.table().cards()[2])
-        check_hand(self)
         hand_occurance = {}
         for card in turn.dealer().game_deck():
             self.add_card(card)
@@ -170,25 +166,91 @@ class CPU:
         for key in hand_occurance:
             if key != 'nothing' and key != 'Pair':
                 propabilities.append(hand_occurance[key])
-        if max(propabilities) - self.get_pot_ods(turn) > 0.2:
+        if self.call() > 0:
+            if int(turn.current_call()) > 0.1*self.pot():
+                if max(propabilities) - self.get_pot_ods(turn) > 0.2:
+                    turn.player_check(self)
+                    print(f"{self.name()} checks.")
+                if propabilities['nothing'] == 0:
+                    x = random.choice(1, 4)
+                    if x == 1:
+                        turn.player_check()
+                        print(f"{self.name()} checks.")
+                        return
+                    if x == 2:
+                        _raise = int(0.1*self.pot())
+                        turn.player_raise_pot(self, _raise)
+                        print(f"{self.name()} raises {_raise}.")
+                    if x == 3:
+                        _raise = int(0.05*self.pot())
+                        turn.player_raise_pot(self, _raise)
+                        print(f"{self.name()} raises {_raise}.")
+                else:
+                    turn.player_fold(self)
+                    print(f"{self.name()} folds.")
+            else:
+                if propabilities['nothing'] == 0:
+                    x = random.choice(1, 4)
+                    if x == 1:
+                        turn.player_check()
+                        print(f"{self.name()} checks.")
+                        return
+                    if x == 2:
+                        _raise = int(0.1*self.pot())
+                        turn.player_raise_pot(self, _raise)
+                        print(f"{self.name()} raises {_raise}.")
+                        return
+                    if x == 3:
+                        _raise = int(0.05*self.pot())
+                        turn.player_raise_pot(self, _raise)
+                        print(f"{self.name()} raises {_raise}.")
+                        return
+                else:
+                    turn.player_check()
+                    print(f"{self.name()} checks.")
+                    return
+        if propabilities['nothing'] == 0:
+            _raise = int(0.1*self.pot())
+            if turn.current_call() >= _raise:
+                turn.player_check()
+                print(f"{self.name()} checks.")
+                return
+            turn.player_raise_pot(self, _raise)
+        elif max(propabilities) - self.get_pot_ods(turn) > 0.2:
             _raise = int(0.2*self.pot())
+            if turn.current_call() >= _raise:
+                turn.player_check()
+                print(f"{self.name()} checks.")
+                return
             turn.player_raise_pot(self, _raise)
             print(f"{self.name()} raises {_raise}.")
         elif max(propabilities) - self.get_pot_ods(turn) > 0.15:
             _raise = int(0.15*self.pot())
+            if turn.current_call() >= _raise:
+                turn.player_check()
+                print(f"{self.name()} checks.")
+                return
             turn.player_raise_pot(self, _raise)
             print(f"{self.name()} raises {_raise}.")
         elif max(propabilities) - self.get_pot_ods(turn) > 0.1:
             _raise = int(0.1*self.pot())
+            if turn.current_call() >= _raise:
+                turn.player_check()
+                print(f"{self.name()} checks.")
+                return
             turn.player_raise_pot(self, _raise)
             print(f"{self.name()} raises {_raise}.")
         elif max(propabilities) - self.get_pot_ods(turn) > 0.05:
             _raise = int(0.05*self.pot())
+            if turn.current_call() >= _raise:
+                turn.player_check()
+                print(f"{self.name()} checks.")
+                return
             turn.player_raise_pot(self, _raise)
             print(f"{self.name()} raises {_raise}.")
         elif max(propabilities) > self.get_pot_ods(turn):
-            turn.player_raise_pot(self, _raise)
-            print(f"{self.name()} raises {_raise}.")
+            turn.player_check()
+            print(f"{self.name()} checks.")
         elif self.get_pot_ods(turn) - max(propabilities) < 0.1:
             turn.player_check(self)
             print(f"{self.name()} checks.")
@@ -199,6 +261,15 @@ class CPU:
             else:
                 self.set_fold(True)
                 print(f"{self.name()} folds.")
+
+    def check_hand_round2(self, turn):
+        for card in self.hand():
+            self.add_card(card)
+        self.add_card(turn.table().cards()[0])
+        self.add_card(turn.table().cards()[1])
+        self.add_card(turn.table().cards()[2])
+        self.add_card(turn.table().cards()[3])
+    
 
 
 # cpu = CPU('cpu')
