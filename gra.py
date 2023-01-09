@@ -65,6 +65,7 @@ while continue_playing is True:
         print("You have lost!")
         continue_playing = False
     turn = Turn(player1, players, blind)
+    turn._winner = False
     turn.give_cards()
     turn.set_blind()
     turn.first_round()

@@ -171,6 +171,32 @@ class Turn:
                                 for player in players:
                                     player.reset_call()
                                 return
+                        if number == 2:
+                            player.check_hand_round2(self)
+                            if len(players) == self.how_many_called():
+                                new_players = [player for player in players]
+                                players1 = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players1.append(player)
+                                self.set_players(players1)
+                                self.set_current_call(0)
+                                self._how_many_called = 0
+                                for player in players:
+                                    player.reset_call()
+                        else:
+                            player.check_hand_round3(self)
+                            if len(players) == self.how_many_called():
+                                new_players = [player for player in players]
+                                players1 = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players1.append(player)
+                                self.set_players(players1)
+                                self.set_current_call(0)
+                                self._how_many_called = 0
+                                for player in players:
+                                    player.reset_call()
                 new_players = [player for player in players]
                 players1 = []
                 for player in new_players:
@@ -295,6 +321,8 @@ class Turn:
         if len(winners) == 1:
             print(f'{winners[0].name()} has won!')
             print(f"{winners[0].name()}'s hand:")
+            print(winners.hand()[0])
+            print(winners.hand()[1])
             print(winners[0].hand_str())
             print(f'The prize is {self.pot()}.')
             winners[0].add_pot(self.pot())
