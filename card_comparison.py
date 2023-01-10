@@ -239,6 +239,8 @@ def check_hand(player):
 
 def cards_comparison(remaining_players, table):
     for player in remaining_players:
+        player.reset_end_hand()
+        player.reset_kicker()
         for card in player.hand():
             player.add_card(card)
         for card in table.cards():

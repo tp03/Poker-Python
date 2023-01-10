@@ -52,19 +52,23 @@ def add_pot():
 
 
 x = add_pot()
+entry = x[0]
 for player in players:
-    player.add_pot(x[0])
+    player.add_pot(entry)
 blind = x[1]
 continue_playing = True
 while continue_playing is True:
     for player in players:
+        player.set_fold(False)
         player._hand = []
-        if player.pot() == 0:
+        if player.pot() <= 0:
             players.remove(player)
+        else:
+            print(f"{player.name()}'s pot: {player.pot()}")
     if player1 not in players:
         print("You have lost!")
         continue_playing = False
-    turn = Turn(player1, players, blind)
+    turn = Turn(player1, players, entry, blind)
     turn._winner = False
     turn.give_cards()
     turn.set_blind()
@@ -73,7 +77,8 @@ while continue_playing is True:
         turn.second_round()
         if turn.winner() is False:
             remaining = turn.third_round()
-            turn.check_winner(remaining)
+            if turn.winner() is False:
+                turn.check_winner(remaining)
     next = input("Do you want to continue? If so, press 1. ")
     if next != '1':
         continue_playing = False
