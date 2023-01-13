@@ -77,6 +77,7 @@ while continue_playing is True:
         player.reset()
         if player.pot() <= 0:
             players.remove(player)
+            print(f"{player.name()} has lost all money.")
         else:
             print(f"{player.name()}'s pot: {player.pot()}")
             sleep(2)

@@ -183,80 +183,81 @@ class Turn:
                     return
             for player in players:
                 if isinstance(player, CPU):
-                    print(f'{player.name()} TURN')
-                    sleep(3)
-                    if number == 1:
-                        player.check_hand_round1(self)
-                        sleep(4)
-                        if self.how_many_folded() == 0:
-                            new_players = [player for player in players]
-                            players1 = []
-                            for player in new_players:
-                                if player.fold() is False:
-                                    players1.append(player)
-                            self.set_players(players1)
-                            self.has_won()
-                            return
-                        if self.how_many_folded()+1 == self.how_many_called():
-                            new_players = [player for player in players]
-                            players1 = []
-                            for player in new_players:
-                                if player.fold() is False:
-                                    players1.append(player)
-                            self.set_players(players1)
-                            self.set_current_call(0)
-                            self._how_many_called = 0
-                            for player in players:
-                                player.reset_call()
-                            return
-                    elif number == 2:
-                        player.check_hand_round2(self)
-                        sleep(4)
-                        if self.how_many_folded() == 0:
-                            new_players = [player for player in players]
-                            players1 = []
-                            for player in new_players:
-                                if player.fold() is False:
-                                    players1.append(player)
-                            self.set_players(players1)
-                            self.has_won()
-                            return
-                        if self.how_many_folded()+1 == self.how_many_called():
-                            new_players = [player for player in players]
-                            players1 = []
-                            for player in new_players:
-                                if player.fold() is False:
-                                    players1.append(player)
-                            self.set_players(players1)
-                            self.set_current_call(0)
-                            self._how_many_called = 0
-                            for player in players:
-                                player.reset_call()
-                            return
-                    else:
-                        player.check_hand_round3(self)
-                        sleep(4)
-                        if self.how_many_folded() == 0:
-                            new_players = [player for player in players]
-                            players1 = []
-                            for player in new_players:
-                                if player.fold() is False:
-                                    players1.append(player)
-                            self.set_players(players1)
-                            self.has_won()
-                            return
-                        if self.how_many_folded()+1 == self.how_many_called():
-                            new_players = [player for player in players]
-                            players1 = []
-                            for player in new_players:
-                                if player.fold() is False:
-                                    players1.append(player)
-                            self.set_players(players1)
-                            self.set_current_call(0)
-                            self._how_many_called = 0
-                            for player in players:
-                                player.reset_call()
-                            return
+                    if self.winner() is False:
+                        print(f'{player.name()} TURN')
+                        sleep(3)
+                        if number == 1:
+                            player.check_hand_round1(self)
+                            sleep(4)
+                            if self.how_many_folded() == 0:
+                                new_players = [player for player in players]
+                                players1 = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players1.append(player)
+                                self.set_players(players1)
+                                self.has_won()
+                                return
+                            if self.how_many_folded()+1 == self.how_many_called():
+                                new_players = [player for player in players]
+                                players1 = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players1.append(player)
+                                self.set_players(players1)
+                                self.set_current_call(0)
+                                self._how_many_called = 0
+                                for player in players:
+                                    player.reset_call()
+                                return
+                        elif number == 2:
+                            player.check_hand_round2(self)
+                            sleep(4)
+                            if self.how_many_folded() == 0:
+                                new_players = [player for player in players]
+                                players1 = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players1.append(player)
+                                self.set_players(players1)
+                                self.has_won()
+                                return
+                            if self.how_many_folded()+1 == self.how_many_called():
+                                new_players = [player for player in players]
+                                players1 = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players1.append(player)
+                                self.set_players(players1)
+                                self.set_current_call(0)
+                                self._how_many_called = 0
+                                for player in players:
+                                    player.reset_call()
+                                return
+                        else:
+                            player.check_hand_round3(self)
+                            sleep(4)
+                            if self.how_many_folded() == 0:
+                                new_players = [player for player in players]
+                                players1 = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players1.append(player)
+                                self.set_players(players1)
+                                self.has_won()
+                                return
+                            if self.how_many_folded()+1 == self.how_many_called():
+                                new_players = [player for player in players]
+                                players1 = []
+                                for player in new_players:
+                                    if player.fold() is False:
+                                        players1.append(player)
+                                self.set_players(players1)
+                                self.set_current_call(0)
+                                self._how_many_called = 0
+                                for player in players:
+                                    player.reset_call()
+                                return
             new_players = [player for player in players]
             players1 = []
             for player in new_players:
@@ -322,8 +323,8 @@ class Turn:
         else:
             self.player_moves(self.gamer(), 1)
         for player in self.players():
-            if self.winner() is False:
-                if isinstance(player, CPU):
+            if isinstance(player, CPU):
+                if self.winner() is False:
                     print(f'{player.name()} TURN')
                     if player.is_blind() is True:
                         if self.blind() > self.current_call():
@@ -404,6 +405,8 @@ class Turn:
             os.system('clear')
             if isinstance(player, CPU):
                 if player is not caller:
+                    player.reset_end_hand()
+                    player.reset_kicker()
                     for card in player.hand():
                         player.add_card(card)
                     if round == 1:
