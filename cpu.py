@@ -1,5 +1,5 @@
-from card_comparison import check_hand
-from card_hierarchy import sign
+from card_comparison import Cards
+from read_from_json_file import sign
 import random
 
 
@@ -68,6 +68,14 @@ class CPU:
         self._kicker_check.append(card)
 
     def reset(self):
+        """
+
+
+        Resets cpu's atributes to values
+        from before the turn has started.
+
+
+        """
         self.set_fold(False)
         self._hand = []
         self._hand_str = ''
@@ -96,6 +104,16 @@ class CPU:
             self._hand.append(card)
 
     def get_pot_ods(self, turn):
+        """
+
+
+        Divides current call in a turn by
+        itself plus current pot in a turn.
+        This function helps to calculate
+        optimal CPU move.
+
+
+        """
         current_pot = turn.pot()
         if self.call() == 0:
             call = turn.current_call()
@@ -106,6 +124,18 @@ class CPU:
         return int(call) / (int(current_pot) + int(call))
 
     def get_propability(self, turn, round):
+        """
+
+
+        Based on round number, CPUs hand and cards on the table,
+        the function calculates which hands can occur during
+        current round and returns a dictionary of them, with number of
+        occurances as keys. It also returns a list of propabilities
+        of good hands happening, where good means a hand higher
+        than a pair.
+
+
+        """
         hand_occurance = {}
         for card in turn.dealer().game_deck():
             self.add_card(card)
@@ -114,7 +144,8 @@ class CPU:
                     self.add_card(second_card)
                     if round != 1:
                         self.remove_card(second_card)
-                    check_hand(self)
+                    card_class = Cards()
+                    card_class.check_hand(self)
                     if sign[self.hand_str()] >= 303:
                         try:
                             hand_occurance['Straight Flush'] += 1
@@ -200,6 +231,16 @@ class CPU:
         return propabilities, hand_occurance
 
     def check_hand_round1(self, turn):
+        """
+
+
+        Based on cards on the table, CPU's hand,
+        current call, current pot and CPU's pot,
+        the function calculates an optimal move
+        for the CPU unit in round 1.
+
+
+        """
         self.reset_end_hand()
         self.reset_kicker()
         for card in self.hand():
@@ -330,6 +371,16 @@ class CPU:
                 return
 
     def check_hand_round2(self, turn):
+        """
+
+
+        Based on cards on the table, CPU's hand,
+        current call, current pot and CPU's pot,
+        the function calculates an optimal move
+        for the CPU unit in round 2.
+
+
+        """
         self.reset_end_hand()
         self.reset_kicker()
         for card in self.hand():
@@ -425,6 +476,16 @@ class CPU:
             return
 
     def check_hand_round3(self, turn):
+        """
+
+
+        Based on cards on the table, CPU's hand,
+        current call, current pot and CPU's pot,
+        the function calculates an optimal move
+        for the CPU unit in round 3.
+
+
+        """
         self.reset_end_hand()
         self.reset_kicker()
         for card in self.hand():
@@ -434,7 +495,8 @@ class CPU:
         self.add_card(turn.table().cards()[2])
         self.add_card(turn.table().cards()[3])
         self.add_card(turn.table().cards()[4])
-        check_hand(self)
+        cards_class = Cards()
+        cards_class.check_hand(self)
         if turn.current_call() > self.pot():
             turn.player_fold(self)
             return
