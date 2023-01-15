@@ -4,24 +4,6 @@ from cpu import CPU
 import os
 from time import sleep
 from read_from_json_file import sign
-deck = [
-    ('2', 'hearts'), ('2', 'diamonds'), ('2', 'spades'), ('2', 'clubs'),
-    ('3', 'hearts'), ('3', 'diamonds'), ('3', 'spades'), ('3', 'clubs'),
-    ('4', 'hearts'), ('4', 'diamonds'), ('4', 'spades'), ('5', 'clubs'),
-    ('5', 'hearts'), ('5', 'diamonds'), ('5', 'spades'), ('5', 'clubs'),
-    ('6', 'hearts'), ('6', 'diamonds'), ('6', 'spades'), ('6', 'clubs'),
-    ('7', 'hearts'), ('7', 'diamonds'), ('7', 'spades'), ('7', 'clubs'),
-    ('8', 'hearts'), ('8', 'diamonds'), ('8', 'spades'), ('8', 'clubs'),
-    ('9', 'hearts'), ('9', 'diamonds'), ('9', 'spades'), ('9', 'clubs'),
-    ('10', 'hearts'), ('10', 'diamonds'), ('10', 'spades'), ('10', 'clubs'),
-    ('jack', 'hearts'), ('jack', 'diamonds'), ('jack', 'spades'),
-    ('jack', 'clubs'),
-    ('queen', 'hearts'), ('queen', 'diamonds'),
-    ('queen', 'spades'), ('queen', 'clubs'),
-    ('king', 'hearts'), ('king', 'diamonds'),
-    ('king', 'spades'), ('king', 'clubs'),
-    ('ace', 'hearts'), ('ace', 'diamonds'),
-    ('ace', 'spades'), ('ace', 'clubs')]
 
 
 class Turn:
@@ -208,6 +190,39 @@ class Turn:
                     return
         self.players()[0].set_blind(True)
 
+    def check_if_checked(self):
+        """
+
+
+        Checks if everyone is a round has checked
+        the current call.
+
+
+        """
+        if self.how_many_folded()+1 == self.how_many_called():
+            self.check_folds()
+            self.set_current_call(0)
+            self._how_many_called = 0
+            for player in self.players():
+                player.reset_call()
+            return True
+        return False
+
+    def check_if_folded(self):
+        """
+
+
+        Checks if there is only one
+        player left in the current turn.
+
+
+        """
+        if self.how_many_folded() == 0:
+            self.check_folds()
+            self.has_won()
+            return True
+        return False
+
     def round(self, number):
         """
 
@@ -225,29 +240,17 @@ class Turn:
             os.system('clear')
             print(f"ROUND {number}")
             sleep(2)
-            if number == 1:
-                self.table().show_three()
-            if number == 2:
-                self.table().show_four()
-            if number == 3:
-                self.table().show_five()
+            self.table().print_cards(number)
             if self.gamer() in self.players():
                 print('YOUR TURN')
                 sleep(2)
                 print(f'Current call: {self.current_call()}')
                 print('Your hand is:')
-                print(self.gamer().hand())
+                self.gamer().print_cards()
                 self.player_moves(self.gamer(), number)
-                if self.how_many_folded() == 0:
-                    self.check_folds()
-                    self.has_won()
+                if self.check_if_folded() is True:
                     return
-                if self.how_many_folded()+1 == self.how_many_called():
-                    self.check_folds()
-                    self.set_current_call(0)
-                    self._how_many_called = 0
-                    for player in self.players():
-                        player.reset_call()
+                if self.check_if_checked() is True:
                     return
             for player in self.players():
                 if isinstance(player, CPU):
@@ -256,49 +259,15 @@ class Turn:
                         sleep(3)
                         if number == 1:
                             player.check_hand_round1(self)
-                            sleep(4)
-                            if self.how_many_folded() == 0:
-                                self.check_folds()
-                                self.has_won()
-                                return
-                            x = self.how_many_called()
-                            if self.how_many_folded()+1 == x:
-                                self.check_folds()
-                                self.set_current_call(0)
-                                self._how_many_called = 0
-                                for player in self.players():
-                                    player.reset_call()
-                                return
                         elif number == 2:
                             player.check_hand_round2(self)
-                            sleep(4)
-                            if self.how_many_folded() == 0:
-                                self.check_folds()
-                                self.has_won()
-                                return
-                            x = self.how_many_called()
-                            if self.how_many_folded()+1 == x:
-                                self.check_folds()
-                                self.set_current_call(0)
-                                self._how_many_called = 0
-                                for player in self.players():
-                                    player.reset_call()
-                                return
                         else:
                             player.check_hand_round3(self)
-                            sleep(4)
-                            if self.how_many_folded() == 0:
-                                self.check_folds()
-                                self.has_won()
-                                return
-                            x = self.how_many_called()
-                            if self.how_many_folded()+1 == x:
-                                self.check_folds()
-                                self.set_current_call(0)
-                                self._how_many_called = 0
-                                for player in self.players():
-                                    player.reset_call()
-                                return
+                        sleep(4)
+                        if self.check_if_folded() is True:
+                            return
+                        if self.check_if_checked() is True:
+                            return
             self.check_folds()
 
     def has_won(self):
@@ -386,9 +355,9 @@ class Turn:
         """
         os.system('clear')
         print("ROUND 1")
-        self.table().show_three()
+        self.table().print_cards(1)
         print('Your hand is:')
-        print(self.gamer().hand())
+        self.gamer().print_cards()
         print('YOUR TURN')
         if self.gamer().is_blind() is True:
             print("You will raise blind.")
@@ -479,7 +448,7 @@ class Turn:
         sleep(3)
         if self.gamer() in self.players() and self.gamer() is not caller:
             print('Your hand is: ')
-            print(self.gamer().hand())
+            self.gamer().print_cards()
             move = input(f'Your pot: {self.gamer().pot()}. Check - "1": ')
             if move == 1:
                 if self.current_call() > self.gamer().pot():
@@ -500,20 +469,14 @@ class Turn:
                     for card in player.hand():
                         player.add_card(card)
                     if round == 1:
-                        player.add_card(self.table().cards()[0])
-                        player.add_card(self.table().cards()[1])
-                        player.add_card(self.table().cards()[2])
+                        for i in range(0, 3):
+                            player.add_card(self.table().cards()[i])
                     elif round == 2:
-                        player.add_card(self.table().cards()[0])
-                        player.add_card(self.table().cards()[1])
-                        player.add_card(self.table().cards()[2])
-                        player.add_card(self.table().cards()[3])
+                        for i in range(0, 4):
+                            player.add_card(self.table().cards()[i])
                     else:
-                        player.add_card(self.table().cards()[0])
-                        player.add_card(self.table().cards()[1])
-                        player.add_card(self.table().cards()[2])
-                        player.add_card(self.table().cards()[3])
-                        player.add_card(self.table().cards()[4])
+                        for i in range(0, 5):
+                            player.add_card(self.table().cards()[i])
                     cards_class = Cards()
                     cards_class.check_hand(player)
                     if sign[player.hand_str()] > 129:
@@ -529,10 +492,10 @@ class Turn:
         self.check_folds()
         if len(self.players()) == 1:
             self.has_won()
-        self.table().show_five()
+        self.table().print_cards(3)
         for player in self.players():
             print(f"{player.name()}'s cards:")
-            print(player.hand())
+            player.print_cards()
         if self.winner() is False:
             self.check_winner(self.players())
 
@@ -554,31 +517,29 @@ class Turn:
             print(f'{winners[0].name()} has won!')
             sleep(3)
             print("Table:")
-            self.table().show_five()
+            self.table().print_cards(3)
             sleep(1)
             print(f"{winners[0].name()}'s hand:")
-            print(winners[0].hand()[0])
-            print(winners[0].hand()[1])
+            winners[0].print_cards()
             print(winners[0].hand_str())
             sleep(3)
-            print(f'The prize is {self.pot()}.')
-            winners[0].add_pot(self.pot())
+            print(f'The prize is {int(self.pot())}.')
+            winners[0].add_pot(int(self.pot()))
             self._winner = True
         else:
             os.system('clear')
             print("It's a draw!")
             sleep(1)
-            prize = round(self.pot()/len(winners), 0)
+            prize = int(round(self.pot()/len(winners), 0))
             print(f"The prize is {prize}.")
             print("Table:")
-            self.table().show_five()
+            self.table().print_cards(3)
             sleep(3)
             print("Winners:")
             for player in winners:
                 print(player.name())
                 print(f"{player.name()}'s hand:")
-                print(player.hand()[0])
-                print(player.hand()[1])
+                player.print_cards()
                 print(player.hand_str())
                 sleep(3)
                 player.add_pot(prize)
@@ -640,6 +601,36 @@ class Player:
     def end_hand(self):
         return self._end_hand
 
+    def print_cards(self):
+        """
+
+
+        Prints players's cards.
+
+
+        """
+        for card in self.hand():
+            card_str = ''
+            if card[0] == 'ace':
+                card_str += 'A'
+            elif card[0] == 'king':
+                card_str += 'K'
+            elif card[0] == 'queen':
+                card_str += 'Q'
+            elif card[0] == 'jack':
+                card_str += 'J'
+            else:
+                card_str += card[0]
+            if card[1] == "clubs":
+                card_str += '\u2663'
+            elif card[1] == "diamonds":
+                card_str += '\u2666'
+            elif card[1] == "hearts":
+                card_str += '\u2665'
+            else:
+                card_str += '\u2660'
+            print(card_str)
+
     def reset(self):
         """
 
@@ -698,13 +689,47 @@ class Dealer:
         """
 
 
-        Adds cards from 'deck' list
-        to dealer's list.
+        Generates a deck of cards to
+        dealer's list.
 
 
         """
-        for card in deck:
-            self._game_deck.append(card)
+        for i in range(0, 4):
+            if i == 0:
+                colour = 'clubs'
+            elif i == 1:
+                colour = 'diamonds'
+            elif i == 2:
+                colour = 'hearts'
+            else:
+                colour = 'spades'
+            for n in range(0, 13):
+                if n == 0:
+                    self._game_deck.append(('2', f'{colour}'))
+                elif n == 1:
+                    self._game_deck.append(('3', f'{colour}'))
+                elif n == 2:
+                    self._game_deck.append(('4', f'{colour}'))
+                elif n == 3:
+                    self._game_deck.append(('5', f'{colour}'))
+                elif n == 4:
+                    self._game_deck.append(('6', f'{colour}'))
+                elif n == 5:
+                    self._game_deck.append(('7', f'{colour}'))
+                elif n == 6:
+                    self._game_deck.append(('8', f'{colour}'))
+                elif n == 7:
+                    self._game_deck.append(('9', f'{colour}'))
+                elif n == 8:
+                    self._game_deck.append(('10', f'{colour}'))
+                elif n == 9:
+                    self._game_deck.append(('jack', f'{colour}'))
+                elif n == 10:
+                    self._game_deck.append(('queen', f'{colour}'))
+                elif n == 11:
+                    self._game_deck.append(('king', f'{colour}'))
+                else:
+                    self._game_deck.append(('ace', f'{colour}'))
 
     def remove_from_deck(self, card):
         self.game_deck().remove(card)
@@ -755,17 +780,12 @@ class Dealer:
 
         """
         my_deck = self.game_deck()
-        card1 = random.choice(my_deck)
-        self.remove_from_deck(card1)
-        card2 = random.choice(my_deck)
-        self.remove_from_deck(card2)
-        card3 = random.choice(my_deck)
-        self.remove_from_deck(card3)
-        card4 = random.choice(my_deck)
-        self.remove_from_deck(card4)
-        card5 = random.choice(my_deck)
-        self.remove_from_deck(card5)
-        return card1, card2, card3, card4, card5
+        cards = []
+        for i in range(0, 5):
+            card_i = random.choice(my_deck)
+            self.remove_from_deck(card_i)
+            cards.append(card_i)
+        return cards
 
 
 class Table:
@@ -780,47 +800,41 @@ class Table:
         for card in table:
             self.cards().append(card)
 
-    def show_three(self):
+    def print_cards(self, round):
         """
 
 
-        Is called to show cards
-        on the table in round 1.
+        Shows cards on the table, the number of
+        them depends on the round.
 
 
         """
-        print(f'{self.cards()[0]}')
-        print(f'{self.cards()[1]}')
-        print(f'{self.cards()[2]}')
-        print('hidden')
-        print('hidden')
-
-    def show_four(self):
-        """
-
-
-        Is called to show cards
-        on the table in round 2.
-
-
-        """
-        print(f'{self.cards()[0]}')
-        print(f'{self.cards()[1]}')
-        print(f'{self.cards()[2]}')
-        print(f'{self.cards()[3]}')
-        print('hidden')
-
-    def show_five(self):
-        """
-
-
-        Is called to show cards
-        on the table in round 3.
-
-
-        """
-        print(f'{self.cards()[0]}')
-        print(f'{self.cards()[1]}')
-        print(f'{self.cards()[2]}')
-        print(f'{self.cards()[3]}')
-        print(f'{self.cards()[4]}')
+        if round == 1:
+            n = 3
+        elif round == 2:
+            n = 4
+        else:
+            n = 5
+        for card in self.cards()[0:n]:
+            card_str = ''
+            if card[0] == 'ace':
+                card_str += 'A'
+            elif card[0] == 'king':
+                card_str += 'K'
+            elif card[0] == 'queen':
+                card_str += 'Q'
+            elif card[0] == 'jack':
+                card_str += 'J'
+            else:
+                card_str += card[0]
+            if card[1] == "clubs":
+                card_str += '\u2663'
+            elif card[1] == "diamonds":
+                card_str += '\u2666'
+            elif card[1] == "hearts":
+                card_str += '\u2665'
+            else:
+                card_str += '\u2660'
+            print(card_str)
+        for i in range(0, 5-n):
+            print('HIDDEN')

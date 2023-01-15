@@ -35,8 +35,8 @@ class Game:
     def add_pot(self):
         """
 
-        Asks user for every player's starting pot
-        and a value of the blind.
+        Asks user for every player's starting pot.
+
 
         """
         x = "Enter the starting pot amount. Min. 1000. Enter integer: "
@@ -45,21 +45,30 @@ class Game:
             p = int(pot)
         except ValueError:
             print("Please enter an integer amount.")
-            p, b = self.add_pot()
+            p = self.add_pot()
         if p < 1000:
             print("Please enter a value bigger than 1000.")
-            p, b = self.add_pot()
-        blind = input(f"Enter blind value from 0, to {0.05*p}. Enter integer:")
+            p = self.add_pot()
+        return p
+
+    def add_blind(self, pot):
+        """
+
+
+        Asks user for the blind amount.
+
+
+        """
+        blind = input(f"Enter blind value from 0 to {int(round(0.05*pot, 0))}. Enter integer:")
         try:
             b = int(blind)
         except ValueError:
             print("Please enter an integer amount.")
-            p, b = self.add_pot()
-        if b < 0 or b > 0.05*p:
+            b = self.add_blind(pot)
+        if b < 0 or b > 0.05*pot:
             print("Amount too big or too small.")
-            p, b = self.add_pot()
-        else:
-            return p, b
+            b = self.add_blind(pot)
+        return b
 
     def play(self):
         """
@@ -82,11 +91,10 @@ class Game:
             cpu = CPU(f"CPU{n}")
             players.append(cpu)
         os.system('clear')
-        x = self.add_pot()
-        entry = x[0]
+        entry = self.add_pot()
         for player in players:
             player.add_pot(entry)
-        blind = x[1]
+        blind = self.add_blind(entry)
         continue_playing = True
         while continue_playing is True:
             for player in players:
@@ -94,8 +102,9 @@ class Game:
                 if player.pot() <= 0:
                     players.remove(player)
                     print(f"{player.name()} has lost all money.")
+                    sleep(2)
                 else:
-                    print(f"{player.name()}'s pot: {player.pot()}")
+                    print(f"{player.name()}'s pot: {int(player.pot())}")
                     sleep(2)
             if player1 not in players:
                 print("You have lost!")

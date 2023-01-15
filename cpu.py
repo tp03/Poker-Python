@@ -103,6 +103,36 @@ class CPU:
         for card in hand:
             self._hand.append(card)
 
+    def print_cards(self):
+        """
+
+
+        Prints CPU's cards.
+        
+
+        """
+        for card in self.hand():
+            card_str = ''
+            if card[0] == 'ace':
+                card_str += 'A'
+            elif card[0] == 'king':
+                card_str += 'K'
+            elif card[0] == 'queen':
+                card_str += 'Q'
+            elif card[0] == 'jack':
+                card_str += 'J'
+            else:
+                card_str += card[0]
+            if card[1] == "clubs":
+                card_str += '\u2663'
+            elif card[1] == "diamonds":
+                card_str += '\u2666'
+            elif card[1] == "hearts":
+                card_str += '\u2665'
+            else:
+                card_str += '\u2660'
+            print(card_str)
+
     def get_pot_ods(self, turn):
         """
 
@@ -282,14 +312,14 @@ class CPU:
                         turn.player_check(self)
                         return
                     elif x == 2:
-                        _raise = round(0.05*self.pot(), 0)
+                        _raise = int(round(0.05*self.pot(), 0))
                         if turn.current_call() >= _raise:
                             turn.player_check(self)
                             return
                         turn.player_raise_pot(self, _raise)
                         return
                     else:
-                        _raise = round(0.025*self.pot(), 0)
+                        _raise = int(round(0.025*self.pot(), 0))
                         if turn.current_call() >= _raise:
                             turn.player_check(self)
                             return
@@ -305,14 +335,14 @@ class CPU:
                         turn.player_check(self)
                         return
                     elif x == 2:
-                        _raise = round(0.05*self.pot(), 0)
+                        _raise = int(round(0.05*self.pot(), 0))
                         if turn.current_call() >= _raise:
                             turn.player_check(self)
                             return
                         turn.player_raise_pot(self, _raise)
                         return
                     else:
-                        _raise = round(0.025*self.pot(), 0)
+                        _raise = int(round(0.025*self.pot(), 0))
                         if turn.current_call() >= _raise:
                             turn.player_check(self)
                             return
@@ -322,35 +352,35 @@ class CPU:
                     turn.player_check(self)
                     return
         elif hand_occurance['nothing'] == 0:
-            _raise = round(0.05*self.pot(), 0)
+            _raise = int(round(0.05*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
             turn.player_raise_pot(self, _raise)
             return
         elif max(propabilities) - self.get_pot_ods(turn) > 0.2:
-            _raise = round(0.1*self.pot(), 0)
+            _raise = int(round(0.1*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
             turn.player_raise_pot(self, _raise)
             return
         elif max(propabilities) - self.get_pot_ods(turn) > 0.15:
-            _raise = round(0.075*self.pot(), 0)
+            _raise = int(round(0.075*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
             turn.player_raise_pot(self, _raise)
             return
         elif max(propabilities) - self.get_pot_ods(turn) > 0.1:
-            _raise = round(0.05*self.pot(), 0)
+            _raise = int(round(0.05*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
             turn.player_raise_pot(self, _raise)
             return
         elif max(propabilities) - self.get_pot_ods(turn) > 0.05:
-            _raise = round(0.025*self.pot(), 0)
+            _raise = int(round(0.025*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
@@ -406,11 +436,11 @@ class CPU:
                 if hand_occurance['nothing'] == 0:
                     x = random.randint(1, 4)
                     if x != 3:
-                        _raise = round(0.05*self.pot(), 0)
+                        _raise = int(round(0.05*self.pot(), 0))
                         turn.player_raise_pot(self, _raise)
                         return
                     if x == 3:
-                        _raise = round(0.025*self.pot(), 0)
+                        _raise = int(round(0.025*self.pot(), 0))
                         turn.player_raise_pot(self, _raise)
                         return
                 else:
@@ -420,46 +450,46 @@ class CPU:
                 if hand_occurance['nothing'] == 0:
                     x = random.randint(1, 4)
                     if x != 3:
-                        _raise = round(0.05*self.pot(), 0)
+                        _raise = int(round(0.05*self.pot(), 0))
                         turn.player_raise_pot(self, _raise)
                         return
                     if x == 3:
-                        _raise = round(0.025*self.pot(), 0)
+                        _raise = int(round(0.025*self.pot(), 0))
                         turn.player_raise_pot(self, _raise)
                         return
                 else:
                     turn.player_check(self)
                     return
         if hand_occurance['nothing'] == 0:
-            _raise = round(0.05*self.pot(), 0)
+            _raise = int(round(0.05*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
             turn.player_raise_pot(self, _raise)
             return
         elif max(propabilities) - self.get_pot_ods(turn) > 0.2:
-            _raise = round(0.05*self.pot(), 0)
+            _raise = int(round(0.05*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
             turn.player_raise_pot(self, _raise)
             return
         elif max(propabilities) - self.get_pot_ods(turn) > 0.15:
-            _raise = round(0.075*self.pot(), 0)
+            _raise = int(round(0.075*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
             turn.player_raise_pot(self, _raise)
             return
         elif max(propabilities) - self.get_pot_ods(turn) > 0.1:
-            _raise = round(0.05*self.pot(), 0)
+            _raise = int(round(0.05*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
             turn.player_raise_pot(self, _raise)
             return
         elif max(propabilities) - self.get_pot_ods(turn) > 0.05:
-            _raise = round(0.025*self.pot(), 0)
+            _raise = int(round(0.025*self.pot(), 0))
             if turn.current_call() >= _raise:
                 turn.player_check(self)
                 return
@@ -509,21 +539,21 @@ class CPU:
         if sign[self.hand_str()] > 26:
             x = random.randint(1, 4)
             if x == 1:
-                _raise = round(0.05*self.pot(), 0)
+                _raise = int(round(0.05*self.pot(), 0))
                 if turn.current_call() >= _raise:
                     turn.player_check(self)
                     return
                 turn.player_raise_pot(self, _raise)
                 return
             elif x == 2:
-                _raise = round(0.075*self.pot(), 0)
+                _raise = int(round(0.075*self.pot(), 0))
                 if turn.current_call() >= _raise:
                     turn.player_check(self)
                     return
                 turn.player_raise_pot(self, _raise)
                 return
             else:
-                _raise = round(0.1*self.pot(), 0)
+                _raise = int(round(0.1*self.pot(), 0))
                 if turn.current_call() >= _raise:
                     turn.player_check(self)
                     return
@@ -538,7 +568,7 @@ class CPU:
                 turn.player_fold(self)
                 return
             if x == 2:
-                _raise = round(0.025*self.pot(), 0)
+                _raise = int(round(0.025*self.pot(), 0))
                 if turn.current_call() >= _raise:
                     turn.player_check(self)
                     return
