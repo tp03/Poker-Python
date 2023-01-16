@@ -104,6 +104,7 @@ class Turn:
     def player_raise_pot(self, player, raise_amount):
         """
 
+
         Makes chosen player raise the current pot.
         The function adds money to turn's pot,
         takes money away from the player and sets calls.
@@ -238,8 +239,7 @@ class Turn:
         """
         while self.winner() is False:
             os.system('clear')
-            print(f"ROUND {number}")
-            sleep(2)
+            print("Cards on the table:")
             self.table().print_cards(number)
             if self.gamer() in self.players():
                 print('YOUR TURN')
@@ -307,10 +307,7 @@ class Turn:
             print("You don't have enough money, you have to fold.")
             self.player_fold(player)
         if move == '0':
-            if self.current_call() > player.pot():
-                print("You don't have enough money to check.")
-                self.player_moves(player, round)
-            elif self.current_call() == player.pot():
+            if self.current_call() == player.pot():
                 self.set_all_in_caller(self.gamer())
                 self.all_in()
             else:
@@ -333,13 +330,6 @@ class Turn:
         elif move == '2':
             self.player_fold(player)
         elif move == '3':
-            if self.current_call() > player.pot():
-                print("You don't have enough money to go all-in.")
-                self.player_moves(player, round)
-            else:
-                self.set_all_in_caller(player)
-                self.all_in(round)
-        else:
             print('PLEASE ONLY USE 0, 1, 2 OR 3.')
             self.player_moves(player, round)
 
@@ -354,7 +344,9 @@ class Turn:
 
         """
         os.system('clear')
-        print("ROUND 1")
+        print("Round 1 - three cards will be shown.")
+        sleep(5)
+        print("Cards on the table:")
         self.table().print_cards(1)
         print('Your hand is:')
         self.gamer().print_cards()
@@ -410,6 +402,9 @@ class Turn:
 
 
         """
+        os.system('clear')
+        print("Everyone has checked, round 2 - fourth card will be shown.")
+        sleep(5)
         self.round(2)
         return
 
@@ -422,6 +417,9 @@ class Turn:
 
 
         """
+        os.system('clear')
+        print("Everyone has checked, round 3 - fifth card will be shown.")
+        sleep(5)
         self.round(3)
         return self.players()
 

@@ -108,7 +108,7 @@ class CPU:
 
 
         Prints CPU's cards.
-        
+
 
         """
         for card in self.hand():
@@ -275,9 +275,8 @@ class CPU:
         self.reset_kicker()
         for card in self.hand():
             self.add_card(card)
-        self.add_card(turn.table().cards()[0])
-        self.add_card(turn.table().cards()[1])
-        self.add_card(turn.table().cards()[2])
+        for i in range(0, 3):
+            self.add_card(turn.table().cards()[i])
         x = self.get_propability(turn, 1)
         propabilities = x[0]
         hand_occurance = x[1]
@@ -415,10 +414,8 @@ class CPU:
         self.reset_kicker()
         for card in self.hand():
             self.add_card(card)
-        self.add_card(turn.table().cards()[0])
-        self.add_card(turn.table().cards()[1])
-        self.add_card(turn.table().cards()[2])
-        self.add_card(turn.table().cards()[3])
+        for i in range(0, 4):
+            self.add_card(turn.table().cards()[i])
         x = self.get_propability(turn, 2)
         propabilities = x[0]
         hand_occurance = x[1]
@@ -520,11 +517,8 @@ class CPU:
         self.reset_kicker()
         for card in self.hand():
             self.add_card(card)
-        self.add_card(turn.table().cards()[0])
-        self.add_card(turn.table().cards()[1])
-        self.add_card(turn.table().cards()[2])
-        self.add_card(turn.table().cards()[3])
-        self.add_card(turn.table().cards()[4])
+        for i in range(0, 5):
+            self.add_card(turn.table().cards()[i])
         cards_class = Cards()
         cards_class.check_hand(self)
         if turn.current_call() > self.pot():
