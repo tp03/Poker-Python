@@ -1,7 +1,7 @@
 from read_from_json_file import sign, Kicker
 
 
-class Cards:
+class Card:
     def check_royal_flush(self, player):
         """
 

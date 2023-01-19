@@ -1,4 +1,4 @@
-from card_comparison import Cards
+from card_comparison import Card
 from klasy import Player, Table
 from read_from_json_file import sign
 
@@ -10,7 +10,7 @@ def test_having_royal_flush():
         ('queen', 'spades'), ('8', 'diamonds'), ('4', 'diamonds'),
         ('king', 'spades'), ('ace', 'spades'),
     ]
-    card = Cards()
+    card = Card()
     assert card.check_royal_flush(player) is True
     assert player.hand_str() == "Royal flush in 'spades'"
     assert sign[player.hand_str()] == 338
@@ -23,7 +23,7 @@ def test_having_four():
         ('10', 'diamonds'), ('4', 'diamonds'),
         ('10', 'hearts'), ('ace', 'spades')
     ]
-    card = Cards()
+    card = Card()
     assert card.check_four(player) is True
     assert player.hand_str() == "4 times '10'"
     assert len(player.kicker_check()) == 3
@@ -35,7 +35,7 @@ def test_having_straight_flush():
         ('10', 'spades'), ('jack', 'spades'), ('9', 'spades'),
         ('8', 'diamonds'), ('4', 'diamonds'), ('8', 'spades'), ('7', 'spades')
     ]
-    card = Cards()
+    card = Card()
     assert card.check_straight_flush(player) is True
     assert player.hand_str() == "Straight flush from '7' in 'spades'"
 
@@ -47,7 +47,7 @@ def test_having_full_house():
         ('10', 'diamonds'), ('queen', 'diamonds'), ('2', 'hearts'),
         ('ace', 'spades')
     ]
-    card = Cards()
+    card = Card()
     assert card.check_full_house(player) is True
     assert player.hand_str() == "'10' on 'queen'"
     assert sign[player.hand_str()] == 239
@@ -60,7 +60,7 @@ def test_having_full_house_two_threes():
         ('10', 'diamonds'), ('queen', 'diamonds'),
         ('queen', 'hearts'), ('ace', 'spades')
     ]
-    card = Cards()
+    card = Card()
     assert card.check_full_house(player) is True
     assert player.hand_str() == "'queen' on '10'"
 
@@ -71,7 +71,7 @@ def test_having_flush():
         ('10', 'spades'), ('10', 'clubs'), ('queen', 'spades'),
         ('7', 'diamonds'), ('2', 'spades'), ('5', 'spades'), ('ace', 'spades')
     ]
-    card = Cards()
+    card = Card()
     assert card.check_flush(player) is True
     assert player.hand_str() == "Flush to 'ace'"
     assert len(player.kicker_check()) == 5
@@ -82,7 +82,7 @@ def test_having_straight():
     player._end_hand = [
         ('3', 'spades'), ('jack', 'spades'), ('5', 'clubs'), ('6', 'diamonds'),
         ('4', 'diamonds'), ('10', 'spades'), ('7', 'hearts')]
-    card = Cards()
+    card = Card()
     assert card.check_straight(player) is True
     assert player.hand_str() == "Straight from '3'"
 
@@ -92,7 +92,7 @@ def test_having_straight_flush_two_options():
     player._end_hand = [
         ('10', 'spades'), ('jack', 'spades'), ('9', 'spades'),
         ('8', 'diamonds'), ('6', 'spades'), ('8', 'spades'), ('7', 'spades')]
-    card = Cards()
+    card = Card()
     assert card.check_straight_flush(player) is True
     assert player.hand_str() == "Straight flush from '7' in 'spades'"
 
@@ -102,7 +102,7 @@ def test_having_straight_two_options():
     player._end_hand = [
         ('3', 'spades'), ('jack', 'spades'), ('5', 'clubs'),
         ('6', 'diamonds'), ('4', 'diamonds'), ('8', 'spades'), ('7', 'hearts')]
-    card = Cards()
+    card = Card()
     assert card.check_straight(player) is True
     assert player.hand_str() == "Straight from '4'"
 
@@ -113,7 +113,7 @@ def test_triple():
         ('10', 'spades'), ('10', 'clubs'), ('queen', 'spades'),
         ('10', 'diamonds'), ('2', 'diamonds'),
         ('5', 'hearts'), ('ace', 'spades'), ]
-    card = Cards()
+    card = Card()
     assert card.check_triple(player) is True
     assert player.hand_str() == "Triple '10'"
     assert len(player.kicker_check()) == 4
@@ -126,7 +126,7 @@ def test_double_pair():
         ('10', 'spades'), ('10', 'clubs'), ('queen', 'spades'),
         ('3', 'spades'), ('3', 'diamonds'),
         ('5', 'hearts'), ('ace', 'spades')]
-    card = Cards()
+    card = Card()
     assert card.check_double_pair(player) is True
     assert player.hand_str() == "Double '10', double '3'"
     assert len(player.kicker_check()) == 3
@@ -138,7 +138,7 @@ def test_double_pair_three_pairs():
         ('10', 'spades'), ('10', 'clubs'), ('queen', 'spades'),
         ('3', 'spades'), ('3', 'diamonds'),
         ('5', 'hearts'), ('5', 'spades')]
-    card = Cards()
+    card = Card()
     assert card.check_double_pair(player) is True
     assert player.hand_str() == "Double '10', double '5'"
     assert len(player.kicker_check()) == 3
@@ -150,7 +150,7 @@ def test_pair():
         ('10', 'spades'), ('7', 'clubs'), ('queen', 'spades'),
         ('3', 'spades'), ('queen', 'diamonds'),
         ('2', 'hearts'), ('5', 'spades')]
-    card = Cards()
+    card = Card()
     assert card.check_pair(player) is True
     assert player.hand_str() == "Double 'queen'"
     assert len(player.kicker_check()) == 5
@@ -161,7 +161,7 @@ def test_add_kicker():
     player._kicker_check = [
         ('10', 'spades'), ('7', 'clubs'),
         ('queen', 'spades'), ('3', 'spades')]
-    card = Cards()
+    card = Card()
     card.add_kickers(player)
     assert player.kicker() == "'queen' in 'spades'"
 
@@ -178,7 +178,7 @@ def test_card_comparison():
     table._cards = [
         ('4', 'hearts'), ('7', 'spades'), ('ace', 'diamonds'),
         ('2', 'clubs'), ('7', 'diamonds')]
-    card = Cards()
+    card = Card()
     assert len(card.cards_comparison(remaining_players, table)) == 2
 
 
@@ -194,7 +194,7 @@ def test_card_comparison2():
     table._cards = [
         ('4', 'hearts'), ('7', 'spades'), ('8', 'diamonds'),
         ('2', 'clubs'), ('7', 'diamonds')]
-    card = Cards()
+    card = Card()
     assert len(card.cards_comparison(remaining_players, table)) == 1
 
 
@@ -210,5 +210,5 @@ def test_card_comparison3():
     table._cards = [
         ('4', 'hearts'), ('7', 'spades'), ('9', 'diamonds'),
         ('2', 'clubs'), ('7', 'diamonds')]
-    card = Cards()
+    card = Card()
     assert len(card.cards_comparison(remaining_players, table)) == 1

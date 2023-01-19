@@ -1,5 +1,5 @@
 import random
-from card_comparison import Cards
+from card_comparison import Card
 from cpu import CPU
 import os
 from time import sleep
@@ -301,11 +301,11 @@ class Turn:
 
         """
         print(f"Your pot: {player.pot()}.")
-        x = 'What is your move? 0 - check, 1 - raise, 2 - fold, 3 - all-in: '
-        move = input(x)
         if self.current_call() > player.pot():
             print("You don't have enough money, you have to fold.")
             self.player_fold(player)
+        x = 'What is your move? 0 - check, 1 - raise, 2 - fold, 3 - all-in: '
+        move = input(x)
         if move == '0':
             if self.current_call() == player.pot():
                 self.set_all_in_caller(self.gamer())
@@ -330,6 +330,9 @@ class Turn:
         elif move == '2':
             self.player_fold(player)
         elif move == '3':
+            self.set_all_in_caller(self.gamer())
+            self.all_in(round)
+        else:
             print('PLEASE ONLY USE 0, 1, 2 OR 3.')
             self.player_moves(player, round)
 
@@ -475,7 +478,7 @@ class Turn:
                     else:
                         for i in range(0, 5):
                             player.add_card(self.table().cards()[i])
-                    cards_class = Cards()
+                    cards_class = Card()
                     cards_class.check_hand(player)
                     if sign[player.hand_str()] > 129:
                         if player.pot() > self.current_call():
@@ -508,7 +511,7 @@ class Turn:
 
 
         """
-        cards_class = Cards()
+        cards_class = Card()
         winners = cards_class.cards_comparison(remaining_players, self.table())
         if len(winners) == 1:
             os.system('clear')

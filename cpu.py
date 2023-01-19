@@ -1,4 +1,4 @@
-from card_comparison import Cards
+from card_comparison import Card
 from read_from_json_file import sign
 import random
 
@@ -174,7 +174,7 @@ class CPU:
                     self.add_card(second_card)
                     if round != 1:
                         self.remove_card(second_card)
-                    card_class = Cards()
+                    card_class = Card()
                     card_class.check_hand(self)
                     if sign[self.hand_str()] >= 303:
                         try:
@@ -515,11 +515,11 @@ class CPU:
         """
         self.reset_end_hand()
         self.reset_kicker()
-        for card in self.hand():
+        for card in self.hand():    
             self.add_card(card)
         for i in range(0, 5):
             self.add_card(turn.table().cards()[i])
-        cards_class = Cards()
+        cards_class = Card()
         cards_class.check_hand(self)
         if turn.current_call() > self.pot():
             turn.player_fold(self)
