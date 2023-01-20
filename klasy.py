@@ -258,11 +258,11 @@ class Turn:
                         print(f'{player.name()} TURN')
                         sleep(3)
                         if number == 1:
-                            player.check_hand_round1or2(self, 1)
+                            player.check_move_round1or2(self, 1)
                         elif number == 2:
-                            player.check_hand_round1or2(self, 2)
+                            player.check_move_round1or2(self, 2)
                         else:
-                            player.check_hand_round3(self)
+                            player.check_move_round3(self)
                         sleep(4)
                         if self.check_if_folded() is True:
                             return
@@ -301,32 +301,41 @@ class Turn:
 
         """
         print(f"Your pot: {player.pot()}.")
-        if self.current_call() > player.pot():
+        if self.current_call() - player.call() > player.pot():
             print("You don't have enough money, you have to fold.")
             self.player_fold(player)
+            return
         x = 'What is your move? 0 - check, 1 - raise, 2 - fold, 3 - all-in: '
         move = input(x)
         if move == '0':
             if self.current_call() == player.pot():
                 self.set_all_in_caller(self.gamer())
-                self.all_in()
+                self.all_in(round)
             else:
                 self.player_check(player)
         elif move == '1':
-            amount = input(f'How much do you raise? Your pot: {player.pot()} ')
-            if int(amount) > player.pot():
+            good_input = False
+            while good_input is False:
+                y = f'How much do you raise? Your pot: {player.pot()} '
+                amount = input(y)
+                try:
+                    x = int(amount)
+                    good_input = True
+                except ValueError:
+                    print("Please enter an integer.")
+            if x > player.pot():
                 print("You don't have that much money.")
                 self.player_moves(player, round)
-            elif int(amount) == player.pot():
+            elif x == player.pot():
                 self.set_all_in_caller(player)
-                self.all_in()
-            elif self.current_call() > int(amount):
+                self.all_in(round)
+            elif self.current_call() > x:
                 print("Current call is bigger than your raise.")
                 self.player_moves(player, round)
-            elif self.current_call() == int(amount):
+            elif self.current_call() == x:
                 self.player_check(player)
             else:
-                self.player_raise_pot(player, int(amount))
+                self.player_raise_pot(player, x)
         elif move == '2':
             self.player_fold(player)
         elif move == '3':
@@ -348,39 +357,53 @@ class Turn:
         """
         os.system('clear')
         print("Round 1 - three cards will be shown.")
-        # sleep(5)
+        sleep(5)
         print("Cards on the table:")
         self.table().print_cards(1)
         print('Your hand is:')
         self.gamer().print_cards()
+        sleep(10)
         print('YOUR TURN')
         if self.gamer().is_blind() is True:
-            print("You will raise blind.")
-            self.player_raise_pot(self.gamer(), self.blind())
-            # sleep(10)
+            if self.blind() > self.gamer().pot():
+                self.player_fold(self.gamer())
+            elif self.blind() == self.gamer().pot():
+                self.set_all_in_caller(self.gamer())
+                self.all_in(1)
+            else:
+                print("You will raise blind.")
+                self.player_raise_pot(self.gamer(), self.blind())
+                sleep(4)
         else:
             self.player_moves(self.gamer(), 1)
+            sleep(4)
         for player in self.players():
             if isinstance(player, CPU):
                 if self.winner() is False:
                     print(f'{player.name()} TURN')
                     if player.is_blind() is True:
-                        if self.blind() > self.current_call():
-                            print(f'{player.name()} raises blind.')
-                            self.player_raise_pot(player, self.blind())
-                            sleep(4)
-                        elif self.blind() == self.current_call():
-                            self.player_check(player)
+                        if self.blind() > player.pot():
+                            self.player_fold(player)
+                        elif self.blind() == player.pot():
+                            self.set_all_in_caller(player)
+                            self.all_in(1)
                         else:
-                            x = random.randint(1, 4)
-                            if x == 1:
-                                self.player_fold(player)
+                            if self.blind() > self.current_call():
+                                print(f'{player.name()} raises blind.')
+                                self.player_raise_pot(player, self.blind())
                                 sleep(4)
-                            else:
+                            elif self.blind() == self.current_call():
                                 self.player_check(player)
-                                sleep(4)
+                            else:
+                                x = random.randint(1, 2)
+                                if x == 1:
+                                    self.player_fold(player)
+                                    sleep(4)
+                                else:
+                                    self.player_check(player)
+                                    sleep(4)
                     else:
-                        player.check_hand_round1or2(self, 1)
+                        player.check_move_round1or2(self, 1)
                         sleep(4)
         if self.winner() is True:
             return
@@ -480,7 +503,7 @@ class Turn:
                             player.add_card(self.table().cards()[i])
                     cards_class = Card()
                     cards_class.check_hand(player)
-                    if sign[player.hand_str()] > 101:
+                    if sign[player.hand_str()] >= 60:
                         if player.pot() > self.current_call():
                             self.player_check(player)
                             sleep(4)
@@ -520,10 +543,11 @@ class Turn:
             print("Table:")
             self.table().print_cards(3)
             sleep(1)
-            print(f"{winners[0].name()}'s hand:")
-            winners[0].print_cards()
-            print(winners[0].hand_str())
-            sleep(3)
+            for player in remaining_players:
+                print(f"{player.name()}'s hand:")
+                player.print_cards()
+                print(player.hand_str())
+                sleep(3)
             print(f'The prize is {int(self.pot())}.')
             winners[0].add_pot(int(self.pot()))
             self._winner = True
@@ -662,6 +686,7 @@ class Player:
 
     def reset_end_hand(self):
         self._end_hand = []
+        self._hand_str = ''
 
     def reset_kicker(self):
         self._kicker_check = []

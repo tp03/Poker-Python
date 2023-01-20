@@ -266,7 +266,7 @@ class Card:
 
 
         For hands that doesn't use five cards,
-        this function calculates th ekicker, which
+        this function calculates the kicker, which
         is the highest card  taht doesn't go to the
         main hand.
 

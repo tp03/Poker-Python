@@ -24,11 +24,14 @@ class Game:
         Asks user for the number of CPU oponents.
 
         """
-        bots_number = input("How many oponents do you want to play? ")
+        bots_number = input("How many oponents do you want to play? Max. 7 ")
         try:
             c = int(bots_number)
         except ValueError:
             print("Please enter an integer amount.")
+            c = self.add_bots()
+        if c > 7:
+            print('Please enter the correct amount.')
             c = self.add_bots()
         return c
 
@@ -39,7 +42,8 @@ class Game:
 
 
         """
-        x = "Enter the starting pot amount. Min. 1000. Enter integer: "
+        i = 'Enter integer'
+        x = f"How much money do you want to start with?. Min. 1000. {i}: "
         pot = input(x)
         try:
             p = int(pot)
@@ -59,7 +63,9 @@ class Game:
 
 
         """
-        blind = input(f"Enter blind value from 0 to {int(round(0.05*pot, 0))}. Enter integer:")
+        i = 'Enter integer'
+        x = f"Enter blind value from 0 to {int(round(0.05*pot, 0))}. {i}: "
+        blind = input(x)
         try:
             b = int(blind)
         except ValueError:
@@ -80,7 +86,7 @@ class Game:
         os.system('clear')
         print("WELCOME TO P.I.P.R CASINO!")
         print("You will be playing no limits texas hold'em.")
-        # sleep(4)
+        sleep(7)
         os.system('clear')
         name = self.add_name()
         player1 = Player(name)
@@ -100,15 +106,20 @@ class Game:
             for player in players:
                 player.reset()
                 if player.pot() <= 0:
-                    players.remove(player)
                     print(f"{player.name()} has lost all money.")
                     sleep(2)
                 else:
                     print(f"{player.name()}'s pot: {int(player.pot())}")
-                    # sleep(2)
+                    sleep(2)
+            players_decoy = [player for player in players]
+            players = []
+            for player in players_decoy:
+                if player.pot() > 0:
+                    players.append(player)
             if player1 not in players:
                 print("You have lost!")
-                continue_playing = False
+                print('Goodbye')
+                return
             turn = Turn(player1, players, entry, blind)
             turn._winner = False
             turn.give_cards()
