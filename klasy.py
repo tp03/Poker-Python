@@ -258,9 +258,9 @@ class Turn:
                         print(f'{player.name()} TURN')
                         sleep(3)
                         if number == 1:
-                            player.check_hand_round1(self)
+                            player.check_hand_round1or2(self, 1)
                         elif number == 2:
-                            player.check_hand_round2(self)
+                            player.check_hand_round1or2(self, 2)
                         else:
                             player.check_hand_round3(self)
                         sleep(4)
@@ -348,7 +348,7 @@ class Turn:
         """
         os.system('clear')
         print("Round 1 - three cards will be shown.")
-        sleep(5)
+        # sleep(5)
         print("Cards on the table:")
         self.table().print_cards(1)
         print('Your hand is:')
@@ -357,7 +357,7 @@ class Turn:
         if self.gamer().is_blind() is True:
             print("You will raise blind.")
             self.player_raise_pot(self.gamer(), self.blind())
-            sleep(10)
+            # sleep(10)
         else:
             self.player_moves(self.gamer(), 1)
         for player in self.players():
@@ -380,7 +380,7 @@ class Turn:
                                 self.player_check(player)
                                 sleep(4)
                     else:
-                        player.check_hand_round1(self)
+                        player.check_hand_round1or2(self, 1)
                         sleep(4)
         if self.winner() is True:
             return
@@ -480,7 +480,7 @@ class Turn:
                             player.add_card(self.table().cards()[i])
                     cards_class = Card()
                     cards_class.check_hand(player)
-                    if sign[player.hand_str()] > 129:
+                    if sign[player.hand_str()] > 101:
                         if player.pot() > self.current_call():
                             self.player_check(player)
                             sleep(4)

@@ -80,7 +80,7 @@ class Game:
         os.system('clear')
         print("WELCOME TO P.I.P.R CASINO!")
         print("You will be playing no limits texas hold'em.")
-        sleep(4)
+        # sleep(4)
         os.system('clear')
         name = self.add_name()
         player1 = Player(name)
@@ -105,7 +105,7 @@ class Game:
                     sleep(2)
                 else:
                     print(f"{player.name()}'s pot: {int(player.pot())}")
-                    sleep(2)
+                    # sleep(2)
             if player1 not in players:
                 print("You have lost!")
                 continue_playing = False
