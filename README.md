@@ -2,6 +2,9 @@
 
 A python script for a poker game with texas hold'em rules.
 
+### Author
+
+Tomasz Zalewski - Warsaw University of Technology Faculty of Electronics and Information Technology
 
 ### Why should you check this code.
 
